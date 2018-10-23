@@ -95,13 +95,13 @@ setwd("some_existing_sub_directory")
 ```
 
 ## Variables and native data types in R
-The entities that R creates and manipulates are known as objects. These may be variables, arrays of numbers, character strings, functions, or more general structures built from such components. During an R session, objects are created and stored by name inside the global environment. The R commands *objects()* and *ls()* save the same purpose of listing the name of objects (variables) available in the global workspace. :
+The entities that R creates and manipulates are known as objects. These may be variables, arrays of numbers, character strings, functions, or more general structures built from such components. During an R session, objects are created and stored by name inside the global environment. The R commands *objects()* and *ls()* save the same purpose of listing the name of objects (variables) currently available : 
 
 ```{r}
 objects()
 ```
 
-lists the objects currently stored in the memory of R (which is also called, workspace). To remove objects from the memory, use the function *rm()* :
+The above command lists the objects currently stored in the memory of R (which is also called, workspace). To gather more information about an object, try to following utility functions : *dim()*, *names()*, *head()*, *tail()* and *summary()*. To remove objects from the memory (use with care, no recovery is possible if you don't have a backup), use the function *rm()* :
 
 ```{r}
 rm(a, i)
@@ -120,27 +120,29 @@ R supports the folowing native data types out of box :
 | *list* | Numeric values | list(Name="John",age=12) |
 | *matrix* | 2-d Matrix, same types | matrix(c(1,2,3,4),nrow = 2) |
 | *data.frame* | 2-d Table, mixed types | data.frame(Name=c("John","Alice"),Age=c(12,14)) |
-| *comples* | Comples numbers | 3 + 4i |
+| *complex* | Complex numbers | 3 + 4i |
 
 Note that the function *c()* produces a *vector*. In R, a vector is a one-dimensional list of values. One can put any type of data values together inside a vector. The only condition is that all the elements of the vector are of same type.
 
 ## Let us import some sample data
-To practice, let's use the [Maps That Changed Our World](https://www.arcgis.com/home/item.html?id=72f29810c72043358d7b2bad4c2f22c9) dataset to meet some of native data types :
-
-```{r echo=FALSE}
-options(stringsAsFactors = FALSE)
-data <- read.csv2("MapsThatChangedOurWorld_StoryMap_Data.csv",sep = ";")
-data
+To practice, let's use the [Maps That Changed Our World](https://www.arcgis.com/home/item.html?id=72f29810c72043358d7b2bad4c2f22c9) dataset to meet some of native data types. Let us have a look at the first 3 lines of the file :
+```{r}
+cat(readLines("MapsThatChangedOurWorld_StoryMap_Data.csv",n = 3), sep="\n") 
 ```
 
-To import this csv file, we will use the function *read.csv2*. The columns of this csv dataset are separated by the character ";" so we use the input argument *sep* to tell the *read.csv2* to use that character as a separator string. The result is an object of type *data.frame*. *data frame* is the most popular data type in R. It stores data in a table structure, with multiple rows and columns. A *data.frame* gives the user ability to store a different data type at each column. Each row and column can have a name. In this dataset, each column has a name and the column names are stored in the first row of the csv file. 
+Inspecting the first three lines of the csv file, we see that the columns of this csv dataset are separated by the character **";"** and the first line looks like it contains column headers. To import this csv file, we have several options. R comes with base tools that can read csv files : *read.csv()*, *read.table()*, *read.delim()*, *read.delim2()*, *data.table::fread()*. Note that the *fread()* function is part of package *data.table*. For this task, we will use the function *read.csv2* :
 
-Looking at the above table, we can see that all the columns are input as type "character". The reason why columns *Latitude* and *Longitude* are imported as characters is the presence of strings *E* and *N*. The reason why the column **Year** is imported as character is the presence of the string *AD* in the first line. We will have to process the data later on to normalize all the columns.
+```{r}
+maps <- read.csv2("MapsThatChangedOurWorld_StoryMap_Data.csv",sep = ";")
+maps
+```
 
-See also : read.csv(), read.table(), read.delim(), read.delim2().
+Note that we use the input argument *sep* to tell *read.csv2()* to use that character as a separator string. The result is an object of type *data.frame*. *data frame* is the most popular data type in R. It stores data in a table structure, with multiple rows and columns. A *data.frame* gives the user ability to store a different data type at each column. Each row and column can have a name. In this dataset, each column has a name and the column names are stored in the first row of the csv file. 
+
+Looking at the above *data.frame*, we can see that all the columns have been input as type *factor*. This reason for this is that the strings in an external data file are imported by default as *factor*. The reason why columns *Latitude* and *Longitude* are first taken to be *character* is the presence of charactrers *E*, *W* and *N*, then converted to *factor* by *read.csv2()*. Also, the reason why the column **Year** is of type *character* is the presence of the string *AD* in the first line. We will have to process the data later on to normalize all the columns.
 
 ## Numbers and vectors
-The following command makes a concatenation of scalar numbers using the function “c” to form a vector. The vector is then assigned to the variable “x” : 
+The function *c()* makes a concatenation of scalar numbers to form a vector. The vector is then assigned to the variable “x” : 
 
 ```{r}
 x <- c(10.4, 5.6, 3.1, 6.4, 21.7)
@@ -154,7 +156,40 @@ assign("x", c(10.4, 5.6, 3.1, 6.4, 21.7))
 x
 ```
 
-### Vector arithmetics R
+As stated above, the columns **Latitude** and **Longitude** in the sample *data.frame* are indeed meant to be numeric values. They are the geographical representation of latitude and longitude data where *N* denotes the northern hemisphere and *W* denotes the western hemisphere. In order to convert these columns to *numeric*, we need to take away these letters and make the eastern hemispherical longitudes negative.
+
+```{r}
+maps$Latitude <- gsub("N", "", maps$Latitude)
+maps$Longitude <- gsub("W","", maps$Longitude)
+index <- grep(" E", maps$Longitude)
+maps$Longitude <- gsub("E","", maps$Longitude)
+
+maps$Latitude <- as.numeric(maps$Latitude)
+maps$Longitude <- as.numeric(maps$Longitude)
+maps$Longitude[index] <- -1*maps$Longitude[index]
+```
+
+**Notes**
+- We used function *gsub()* to search and replace a string in a vector of strings
+- We used function *grep()* to return the position index of elements in a vector of strings that contain a search token (in this case the lines containing the token character *E*)
+- We used the function *as.numeric()* to convert strings into numeric values.
+- We multiplied the rows containing the teken character *E* by -1 to negate these values.
+
+We also have to perform a similar operation on the Year column to make the column entirely *numeric*:
+```{r}
+index2 <- grep("AD", maps$Year)
+maps$Year <- gsub("AD","", maps$Year)
+maps$Year <- as.numeric(maps$Year)
+```
+
+After these operations, we have purely numeric coordinate columns, with coordinates belonging to the Eastern hemisphere expressed as negatives.
+
+```{r}
+maps[,c("Longitude","Latitude","Year")]
+```
+
+
+### Vector arithmetics
 Vectors can be used in arithmetic expressions, in which case the operations are performed element by element without having to write a for loop : 
 
 ```{r}
