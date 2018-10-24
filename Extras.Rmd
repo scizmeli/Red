@@ -1,0 +1,40 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+### Special variable .Last.value
+The special variable *.Last.value* prints the results of the last valid expression :
+```{r}
+a=1.2 
+1/a 
+```
+and access the contents of *.Last.value* :
+```{r}
+.Last.value 
+```
+
+### Source and sink
+The file *commands.R* contains some R code. This is an R script file. Let us have a look at the contents of it :
+```{r}
+cat(readLines("commands.R"), sep="\n") 
+```
+
+The run the R commands that are contained within a script file, use the function *source()* : 
+```{r}
+source("commands.R")
+```
+
+It is possible to redirect the output of running commands and functions into a text file on disk using *sink()*. The function *sink()* will divert all subsequent output from the console to an external file, ‘record.lis’. The second call will close the file.
+```{r}
+sink("record.lis")
+i <- 1:30
+outer(i, i, "*")
+sink()
+```
+
+To make sure the file has been created on the filesystem : 
+```{r}
+list.files(".","record")
+```
+

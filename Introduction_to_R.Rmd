@@ -3,9 +3,7 @@ title: "Introduction to programming with R"
 output: html_notebook
 ---
 
-Tutorial : Introduction to R
 Servet Ahmet Çizmeli, [PranaGEO Ltd.](https://pranageo.com)
-
 
 This tutorial has been compiled by slightly modifying a subset of the contents of the following documents : 
 
@@ -28,7 +26,6 @@ or
 
 On most R installations help is available in HTML format by running :
 
-
 ```{r}
 help.start()
 ```
@@ -36,46 +33,28 @@ help.start()
 The vertical arrow keys on the keyboard ⇓⇑ can be used to scroll forward and backward through a command history.
 
 ## Basic tools to interact with R
-### Special variable .Last.value
-The special variable *.Last.value* prints the results of the last valid expression :
+
+### Current working directory
+When we need to access files in the operating system's filesystem from R, the *current working directory* plays an important role. To get the current directory, use *getwd()*:
 ```{r}
-a=1.2 
-1/a 
-```
-and access the contents of *.Last.value* :
-```{r}
-.Last.value 
+getwd()
 ```
 
-### Source and sink
-The file *commands.R* contains some R code. This is an R script file. Let us have a look at the contents of it :
-```{r}
-cat(readLines("commands.R"), sep="\n") 
+To change the current working directory, use *setwd()* :
+```{r eval=FALSE}
+setwd("some_existing_directory")
 ```
 
-The run the R commands that are contained within a script file, use the function *source()* : 
+### Listing files
+R will be able to find the files residing in the current directory without needing any additional path information. For example, all the files and directories listed with the below command are inside the current curking directory :
+
 ```{r}
-source("commands.R")
+list.files()
 ```
 
-It is possible to redirect the output of running commands and functions into a text file on disk using *sink()*. The function *sink()* will divert all subsequent output from the console to an external file, ‘record.lis’. The second call will close the file.
+The first variable to function *list.files()* is the directory to search under (here, the current working directory as denoted by "."). The second argument is the regular expressions (Regex) pattern for searching the file. For more information on Regex, refer to this course by [Gloria Li and Jenny Bryan](http://stat545.com/block022_regular-expression.html). Note that Regex is an advanced subject. If you are more comfortable with simple shell globing, you can use *glob2rx()* to search files whose names begin with *"rec"* :
 ```{r}
-sink("record.lis")
-i <- 1:30
-outer(i, i, "*")
-sink()
-```
-
-To make sure the file exists on the filesystem : 
-```{r}
-list.files(".","record")
-```
-
-The first variable to function *list.files()* is the directory to search under (here, the current working directory as denoted by "."). The second argument is the regular expressions (Regex) pattern for searching the file. For more information on Regex, refer to this course by [Gloria Li and Jenny Bryan](http://stat545.com/block022_regular-expression.html).
-
-Note that Regex is an advanced, hairy subject. If you are more comfortable with simple shell globing, you can use *glob2rx()* to obtain the same results :
-```{r}
-list.files(".",glob2rx("rec*"))
+list.files(".", glob2rx("rec*"))
 ```
 
 To obtain the size of the file in bytes, use the utility function "file.size()":
@@ -83,19 +62,8 @@ To obtain the size of the file in bytes, use the utility function "file.size()":
 file.size("record.lis")
 ```
 
-
-### Current working directory
-In the above examples, interacted with files the operating system's filesystem from R but we did not provide any file path to find them. R was able to find the file because it was located in the **current directory**. To get the current directory, use *getwd()*:
-```{r}
-getwd()
-```
-and to change it, use setwd()
-```{r eval=FALSE}
-setwd("some_existing_sub_directory")
-```
-
 ## Variables and native data types in R
-The entities that R creates and manipulates are known as objects. These may be variables, arrays of numbers, character strings, functions, or more general structures built from such components. During an R session, objects are created and stored by name inside the global environment. The R commands *objects()* and *ls()* save the same purpose of listing the name of objects (variables) currently available : 
+The entities that R creates and manipulates are known as *variables* or *objects*. These may be variables, arrays of numbers, character strings, functions, or more general structures built from such components. During an R session, objects are created and stored by name inside the global environment. The R commands *objects()* and *ls()* save the same purpose of listing the name of variables available in the currently workspace : 
 
 ```{r}
 objects()
