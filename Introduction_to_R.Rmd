@@ -42,7 +42,18 @@ getwd()
 
 To change the current working directory, use *setwd()* :
 ```{r eval=FALSE}
-setwd("some_sub_directory")
+#Create a new sub-directory
+dir.create("some_existing_directory")
+
+#Set the current directory to the new sub-directory
+setwd("some_existing_directory")
+getwd()
+
+#Set the current directory to original (top-level) directory
+setwd("..")
+
+#Remove the newly created directory
+file.remove("some_existing_directory")
 ```
 
 ### Listing files
@@ -53,7 +64,11 @@ R will be able to find the files residing in the current directory without needi
 file.create("test_file.txt")
 ```
 
-The first variable to function *list.files()* is the directory to search under (here, the current working directory as denoted by "."). The second argument is the regular expressions (Regex) pattern for searching the file. For more information on Regex, refer to this course by [Gloria Li and Jenny Bryan](http://stat545.com/block022_regular-expression.html). Note that Regex is an advanced subject. If you are more comfortable with simple shell globing, you can use *glob2rx()* to search files whose names begin with *"test_"* :
+```{r}
+list.files(".","test")
+```
+
+The first variable to function *list.files()* is the directory to search under (here, the current working directory as denoted by "."). The second argument is the regular expressions (Regex)  pattern for searching the file. For more information on Regex, refer to this course by [Gloria Li and Jenny Bryan](http://stat545.com/block022_regular-expression.html). Note that Regex is an advanced subject. If you are more comfortable with simple shell globing, you can use *glob2rx()* to search files whose names begin with *"test_"* :
 
 ```{r}
 list.files(".", glob2rx("test_*"))
@@ -70,11 +85,15 @@ file.size("test_file.txt")
 The entities that R creates and manipulates are known as *variables* or *objects*. These may be variables, arrays of numbers, character strings, functions, or more general structures built from such components. During an R session, objects are created and stored by name inside the global environment. The R commands *objects()* and *ls()* save the same purpose of listing the name of variables available in the currently workspace : 
 
 ```{r}
-a <- 1
+a <- mtcars
 objects()
 ```
 
-The above command lists the objects currently stored in the memory of R (which is also called, workspace). To gather more information about an object, try to following utility functions : *dim()*, *names()*, *head()*, *tail()* and *summary()*. To remove objects from the memory (use with care, no recovery is possible if you don't have a backup), use the function *rm()* :
+The above command lists the objects currently stored in the memory of R (which is also called, workspace). 
+
+To gather more information about an object, try to following utility functions : *length()*, *dim()*, *names()*, *head()*, *tail()* and *summary()*. 
+
+To remove objects from the memory (use with care, no recovery is possible if you don't have a backup), use the function *rm()* :
 
 ```{r}
 rm(a)
@@ -86,6 +105,7 @@ R supports the folowing native data types out of box :
 
 | Data Type        | Explanation | Examples |
 | ------------- |:-------------:|:-------------:|
+|<img width=100/>|<img width=180/>|
 | *numeric* | Numeric values | c(12.3,1e5) |
 | *character* | Strings  | "Hello world" |
 | *factors* | Categorical Variables | as.factor("January","February","March") |
@@ -95,18 +115,18 @@ R supports the folowing native data types out of box :
 | *data.frame* | 2-d Table, mixed types | data.frame(Name=c("John","Alice"),Age=c(12,14)) |
 | *complex* | Complex numbers | 3 + 4i |
 
+<br>
 Note that the function *c()* produces a *vector*. In R, a vector is a one-dimensional list of values. One can put any type of data values together inside a vector. The only condition is that all the elements of the vector are of same type.
 
 ## Variable assignment
 We previously saw that the function *c()* makes a concatenation of scalar numbers to form a vector. We can also assigned to the variable *x* using one of the following operators : *<-*, *->*, *=* :
 
 ```{r}
-idx <- c(1,2,3,4,5,6,7,8,9)
+idx <- c(-4,2,5,4,12,66,0,8,9)
 summary(idx)
 ```
 
-An assignment can also be made using the function *assign()*, offering an equivalent way where
-the name of the target variable can be stored in another variable. This can be very useful for advanced programming :
+An assignment can also be made using the function *assign()*, offering an equivalent way where the name of the target variable can be stored in another variable. This can be very useful for advanced programming :
 
 ```{r}
 varname = "temp"
@@ -126,6 +146,7 @@ v
 To practice variaous R data types, let's use the [Maps That Changed Our World](https://www.arcgis.com/home/item.html?id=72f29810c72043358d7b2bad4c2f22c9) dataset to meet some of native data types. Let us have a look at the first 3 lines of the file :
 
 ```{r}
+download.file("https://raw.githubusercontent.com/scizmeli/Red/master/MapsThatChangedOurWorld_StoryMap_Data.csv","MapsThatChangedOurWorld_StoryMap_Data.csv")
 cat(readLines("MapsThatChangedOurWorld_StoryMap_Data.csv",n = 3), sep="\n") 
 ```
 
@@ -135,7 +156,8 @@ For this task, we will use *read.csv2()* :
 
 ```{r}
 maps <- read.csv2("MapsThatChangedOurWorld_StoryMap_Data.csv",sep = ";")
-maps
+colnames(maps)[5] <- "Title"
+maps[,1:7]
 ```
 
 Note that we use the input argument *sep* to tell *read.csv2()* to use that character as a separator string. The resulting object *maps* is of type *data.frame*, which is the most popular data type in R. It stores data in a table structure, with multiple rows and columns. A *data.frame* gives the user ability to store different data types at each column. Each row and column can also have a name. In this dataset, each column has a name and the column names are stored in the first row of the csv file. 
@@ -162,7 +184,8 @@ maps$Longitude[index] <- -1*maps$Longitude[index]
 - We used the function *as.numeric()* to convert strings into numeric values.
 - We multiplied the rows containing the teken character *E* by -1 to negate these values.
 
-We also have to perform a similar operation on the Year column to make the column entirely *numeric*, i.e. *class(maps$Year)* becomes equal to *`r class(maps$Year)`*
+We also have to perform a similar operation on the Year column to make the column entirely numeric, i.e. *class(maps$Year)* becomes equal to *"numeric"*
+
 ```{r}
 index2 <- grep("AD", maps$Year)
 maps$Year <- gsub("AD","", maps$Year)
@@ -185,11 +208,14 @@ names(v)<- c("meals","hotel","transport","souvenirs","varia")
 v
 ```
 
-and reference the elements later on using names :
+When we have a named variable, we can reference/subset its elements on using names :
+
 ```{r}
 v["hotel"]
 ```
+
 use the function *names()* to extract names in string format from a named vector :
+
 ```{r}
 names(v)
 ```
@@ -200,6 +226,7 @@ Try the following code to generate a regular sequence with unit interval :
 
 ```{r}
 seq(-5, 5) -> s3
+s3
 ```
 
 using the *:* notation, we can produce the exact same result :
@@ -212,28 +239,29 @@ To generate a sequence with other intervals, use the argument *by* :
 
 ```{r}
 seq(-5, 5, by=.2) -> s3
+s3
 ```
 
 To generate a sequence of a given number of elements, try :
 ```{r}
-s4 <- seq(length=51, from=-5, by=.2)
+s4 <- seq(length=21, from=-5, by=.2)
 s4
 ```
 
 A related function is *rep()* which can be used for replicating an object in various complicated ways. The simplest form is :
 
 ```{r}
-(s5 <- rep(x, times=5))
+(s5 <- rep(c(1,2,-3), times=3))
 ```
 
 which will put five copies of x end-to-end in s5. Another useful version is :
 
 ```{r}
-s6 <- rep(x, each=5)
+s6 <- rep(c(1,2,-3), each=3)
 s6
 ```
 
-which repeats each element of x five times before moving on to the next.
+which repeats each element of the input vector three times before moving on to the next.
 
 ## Logical vectors
 Logical vectors are usually generated by logical tests. For example :
@@ -246,7 +274,7 @@ c1
 
 the newly created variable *c1* is of type **logical** i.e. *class(c1)* is equal to *"`r class(c1)`"* . We can use logical variables to subset a variable :
 ```{r}
-x[c1]
+temp[c1]
 ```
 
 ## Operators
@@ -286,6 +314,7 @@ The function *is.na()* gives a logical vector of the same size as x with value *
 z <- c(1:3,NA); 
 z
 ind <- is.na(z)
+ind
 ```
 
 Note that there is a second kind of “missing” values which are produced by numerical computation, the so-called *Not a Number*, *NaN*, values. Examples are :
@@ -315,6 +344,7 @@ Such index vectors can be any of four distinct types.
 ### 1. Indexing with a logical vector. 
 ```{r}
 x=c(1,2,NA,6,NA,923) 
+x
 y <- x[!is.na(x)] 
 y 
 ```
@@ -323,7 +353,7 @@ y
 In this case the values in the index vector must lie in the set {1, 2, . . . , length(x)}. The corresponding elements of the vector are selected and concatenated, in that order, in the result. The index vector can be of any length and the result is of the same length as the index vector. For example x[6] is the sixth component of x. Try :
 
 ```{r}
-x[1:10]
+x[1:4]
 ```
 
 selects the first 10 elements of x (assuming *length(x)* is not less than 10). With ghe following command one can generate a complex multiple combination of elements of x : 
@@ -340,6 +370,7 @@ Such an index vector specifies the values to be excluded rather than included. T
 
 ```{r}
 y <- x[-(1:5)]
+y
 ```
 
 assigns all but the first five elements of *x* to *y*. 
@@ -352,6 +383,7 @@ fruit <- c(5, 10, 1, 20)
 names(fruit) <- c("orange", "banana", "apple", "peach") 
 fruit
 lunch <- fruit[c("apple","orange")] 
+lunch
 ```
 
 The advantage is that alphanumeric names are often easier to remember than numeric indices. This option is particularly useful in connection with *data frames*, as we shall see later. 
@@ -371,7 +403,9 @@ replaces any missing values in *x* by zeros. On the other hand :
 
 ```{r}
 y=c(1,-2,3,-4,5)
+y
 y[y < 0] <- -y[y < 0] 
+y
 ```
 
 has the same effect as using the *abs()* that computes the absolute values in a given variable :
@@ -385,11 +419,22 @@ To assign a character to an object, use *"* or *'*:
 
 ```{r}
 a <- "Working with characters is possible in R"
+a
 ```
 
 The *paste()* function takes an arbitrary number of arguments and concatenates them one by one into character strings :
 
 ```{r}
-labs <- paste(c("X","Y"), 1:13, sep="")
+labs <- paste(c("X","Y"), 1:13, sep="||")
 labs
 ```
+
+## Exercise
+Download and import the [NOMAD: NASA bio-Optical Marine Algorithm Dataset](https://seabass.gsfc.nasa.gov/wiki/NOMAD). This is a CSV file containing 4458 lines
+of measurements of seawater quality collected during several sea campaigns.
+
+```{r}
+urlNomad = ""
+```
+
+file:///home/acizmeli/data/aaworks/GIT.repos/biopticar/inst/test_data/nomad_seabass_v2.a_2008200.txt
