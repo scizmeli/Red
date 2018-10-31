@@ -126,6 +126,7 @@ v
 To practice variaous R data types, let's use the [Maps That Changed Our World](https://www.arcgis.com/home/item.html?id=72f29810c72043358d7b2bad4c2f22c9) dataset to meet some of native data types. Let us have a look at the first 3 lines of the file :
 
 ```{r}
+download.file("https://raw.githubusercontent.com/scizmeli/Red/master/MapsThatChangedOurWorld_StoryMap_Data.csv","MapsThatChangedOurWorld_StoryMap_Data.csv")
 cat(readLines("MapsThatChangedOurWorld_StoryMap_Data.csv",n = 3), sep="\n") 
 ```
 
@@ -162,7 +163,8 @@ maps$Longitude[index] <- -1*maps$Longitude[index]
 - We used the function *as.numeric()* to convert strings into numeric values.
 - We multiplied the rows containing the teken character *E* by -1 to negate these values.
 
-We also have to perform a similar operation on the Year column to make the column entirely *numeric*, i.e. *class(maps$Year)* becomes equal to *`r class(maps$Year)`*
+We also have to perform a similar operation on the Year column to make the column entirely numeric, i.e. *class(maps$Year)* becomes equal to *"numeric"*
+
 ```{r}
 index2 <- grep("AD", maps$Year)
 maps$Year <- gsub("AD","", maps$Year)
@@ -186,10 +188,13 @@ v
 ```
 
 and reference the elements later on using names :
+
 ```{r}
 v["hotel"]
 ```
+
 use the function *names()* to extract names in string format from a named vector :
+
 ```{r}
 names(v)
 ```
@@ -216,20 +221,20 @@ seq(-5, 5, by=.2) -> s3
 
 To generate a sequence of a given number of elements, try :
 ```{r}
-s4 <- seq(length=51, from=-5, by=.2)
+s4 <- seq(length=21, from=-5, by=.2)
 s4
 ```
 
 A related function is *rep()* which can be used for replicating an object in various complicated ways. The simplest form is :
 
 ```{r}
-(s5 <- rep(x, times=5))
+(s5 <- rep(c(1,2,-3), times=3))
 ```
 
 which will put five copies of x end-to-end in s5. Another useful version is :
 
 ```{r}
-s6 <- rep(x, each=5)
+s6 <- rep(c(1,2,-3), each=3)
 s6
 ```
 
