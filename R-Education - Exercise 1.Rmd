@@ -5,7 +5,7 @@ output: html_notebook
 
 # Exercise 1
 Download and import the [NOMAD: NASA bio-Optical Marine Algorithm Dataset](https://seabass.gsfc.nasa.gov/wiki/NOMAD). This is a CSV file containing 4458 lines
-of measurements of seawater quality collected during several sea campaigns.
+of measurements of seawater quality collected during several sea campaigns. Use the URL provided in the first cell.
 
 - Download the csv file and give the downloaded file the same name
 - View contents the first 3 lines of the file 
@@ -14,10 +14,9 @@ of measurements of seawater quality collected during several sea campaigns.
 - Use the first 6 columns of the data.frame to create a new column of type *POSIXct*. Hint : Generate a character variable of date/time in %Y/%m/%d %H:%M:%S" format using *paste()*. Then convert the string to *strptime()* and call it datetime1
 - Make sure that *datetime* variable is of class *POSIXct*
 - Remove the first 6 columns of *nomad*
-- Prepend *datetime* as a new column to *nomad*. Call new column as "datetime"
+- Prepend *datetime* as a new column into *nomad*. Call new column as "datetime"
 - Convert all invalid numerical measurements to *NA*
 - Make a scatterplot with function *plot()* where the column *chl_a* is plotted with respect to column *lw489*. Use red dots (instead of black hollow circles) of size 3. Hint : Consult documentation of function *par()*.
-
 
 ```{r}
 urlNomad = "https://raw.githubusercontent.com/scizmeli/Red/master/nomad_seabass_v2.a_2008200.txt"
@@ -27,35 +26,23 @@ urlNomad = "https://raw.githubusercontent.com/scizmeli/Red/master/nomad_seabass_
 ```{r}
 #
 ```
-download.file(urlNomad, "nomad_seabass_v2.a_2008200.txt")
 
 #Import data.frame
 ```{r}
 #
 ```
-nomad <- read.table("nomad_seabass_v2.a_2008200.txt",header=T,sep=",", comment.char = "!")
 
 #Make a datetime variable of tyep Posixct
-date1 = paste(nomad$year, nomad$month, nomad$day,sep="/")
-time1 = paste(nomad$hour, nomad$minute, nomad$second,sep=":")
-datetime1 = paste(date1, time1)
-datetime = strptime(datetime1,"%Y/%m/%d %H:%M:%S")
-datetime = as.POSIXct(datetime)
-class(datetime)
-nomad = nomad[,-(1:6)] 
-nomad = cbind(data.frame(datetime=))
-nomad[nomad==-999]=NA
-plot(nomad$lw489, nomad$chl_a, pch=".",col="red",cex=3)
 ```{r}
 #
 ```
 
 # Remove the first 6 columns of the data frame
-```{r} *chl_a* is plotted with respect to column *lw489*
+```{r}
 #
 ```
 
-# Prepend *datetime* as a new column to *nomad*. Call new column as "datetime"
+# Prepend *datetime* as a new column into *nomad*. Call new column as "datetime"
 ```{r}
 #
 ```
