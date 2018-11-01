@@ -56,15 +56,14 @@ setwd("..")
 file.remove("some_existing_directory")
 ```
 
-### Listing files
+### Creating and listing files
 R will be able to find the files residing in the current directory without needing any additional path information. For example, all the files and directories listed with the below command are inside the current curking directory :
 
 ```{r}
 #Let's create an empty text file on filesystem
 file.create("test_file.txt")
-```
 
-```{r}
+#And list it
 list.files(".","test")
 ```
 
@@ -79,7 +78,8 @@ To obtain the size of the file in bytes, use the utility function "file.size()":
 file.size("test_file.txt")
 ```
 
-**See Also :** *list.dirs()*, *dir()*
+**See Also :** *list.dirs()*, *dir()*, *file.copy()*, *file.exists()*, *file.path()*,
+*file.rename()*
 
 ## Variables and native data types in R
 The entities that R creates and manipulates are known as *variables* or *objects*. These may be variables, arrays of numbers, character strings, functions, or more general structures built from such components. During an R session, objects are created and stored by name inside the global environment. The R commands *objects()* and *ls()* save the same purpose of listing the name of variables available in the currently workspace : 
@@ -105,7 +105,7 @@ R supports the folowing native data types out of box :
 
 | Data Type        | Explanation | Examples |
 | ------------- |:-------------:|:-------------:|
-|<img width=100/>|<img width=180/>|
+|<img width=100/>|<img width=200/>|
 | *numeric* | Numeric values | c(12.3,1e5) |
 | *character* | Strings  | "Hello world" |
 | *factors* | Categorical Variables | as.factor("January","February","March") |
@@ -123,7 +123,7 @@ We previously saw that the function *c()* makes a concatenation of scalar number
 
 ```{r}
 idx <- c(-4,2,5,4,12,66,0,8,9)
-summary(idx)
+idx
 ```
 
 An assignment can also be made using the function *assign()*, offering an equivalent way where the name of the target variable can be stored in another variable. This can be very useful for advanced programming :
@@ -192,13 +192,12 @@ maps$Year <- gsub("AD","", maps$Year)
 maps$Year <- as.numeric(maps$Year)
 ```
 
-After these operations, we have purely numeric coordinate columns, with coordinates belonging to the Eastern hemisphere expressed as negatives :
+After these operations, we have purely numeric coordinate columns, with coordinates belonging to the Eastern hemisphere expressed as negatives. The code below extracts a 3-column subset of the original data.frame via column name selection.
+
 
 ```{r}
 maps[,c("Longitude","Latitude","Year")]
 ```
-
-The above notation took a 3-column subset of the original data.frame via column name selection.
 
 ### The "names" attribute
 It is possible to give *names* to every element of a vector :
@@ -214,12 +213,11 @@ When we have a named variable, we can reference/subset its elements on using nam
 v["hotel"]
 ```
 
-use the function *names()* to extract names in string format from a named vector :
+Use the function *names()* to extract names in string format from a named vector :
 
 ```{r}
 names(v)
 ```
-
 
 ### Generating regular sequences
 Try the following code to generate a regular sequence with unit interval :
@@ -272,12 +270,13 @@ c2 = temp > 13 & temp< 4
 c1
 ```
 
-the newly created variable *c1* is of type **logical** i.e. *class(c1)* is equal to *"`r class(c1)`"* . We can use logical variables to subset a variable :
+The newly created variable *c1* is of type **logical** i.e. *class(c1)* is equal to *"`r class(c1)`"* . We can use logical variables to subset a variable :
+
 ```{r}
 temp[c1]
 ```
 
-## Operators
+## Logical Operators
 Only the elements of *x* where the corresponding element in *c1* is TRUE are matched.
 
 | Operator        | Name           |
@@ -293,11 +292,13 @@ Only the elements of *x* where the corresponding element in *c1* is TRUE are mat
 | *\|* | OR |
 
 As an example, if *c1* and *c2* are two logical variables, then following AND operation returns their intersection :
+
 ```{r}
 c2 & c1
 ```
 
 while the following OR operation returns their union : 
+
 ```{r}
 c1 | c2
 ```
@@ -321,11 +322,6 @@ Note that there is a second kind of “missing” values which are produced by n
 
 ```{r}
 0/0
-```
-
-or
-
-```{r}
 Inf - Inf
 ```
 
@@ -412,6 +408,7 @@ has the same effect as using the *abs()* that computes the absolute values in a 
 
 ```{r}
 y <- abs(y)
+y
 ```
  
 ## Working with characters
@@ -429,12 +426,4 @@ labs <- paste(c("X","Y"), 1:13, sep="||")
 labs
 ```
 
-## Exercise
-Download and import the [NOMAD: NASA bio-Optical Marine Algorithm Dataset](https://seabass.gsfc.nasa.gov/wiki/NOMAD). This is a CSV file containing 4458 lines
-of measurements of seawater quality collected during several sea campaigns.
-
-```{r}
-urlNomad = ""
-```
-
-file:///home/acizmeli/data/aaworks/GIT.repos/biopticar/inst/test_data/nomad_seabass_v2.a_2008200.txt
+See also : *strrep()*, *strsplit()*, *grep()*, *gsub()*
