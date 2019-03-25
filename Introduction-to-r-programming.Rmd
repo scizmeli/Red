@@ -15,15 +15,67 @@ This education has been compiled by slightly modifying a subset of the contents 
 - R Installation and Administration http://cran.r-project.org/doc/manuals/R-admin.pdf
 
 # Basic tools to interact with R
+On most R installations help is available in HTML format by running :
 
 ## The help system
 ```{r eval=FALSE}
+help.start()
 ?help
 help("plot")
 help.search("plot")
 ```
 
-## Çalışma ortamının saklanması
+## Command history
+The vertical arrow keys on the keyboard ⇓⇑ can be used to scroll forward and backward through a command history.
+
+## Special variable .Last.value
+The special variable *.Last.value* prints the results of the last valid expression :
+```{r}
+a=1.2 
+1/a 
+```
+and access the contents of *.Last.value* :
+```{r}
+.Last.value 
+```
+
+## Source and sink
+The file *commands.R* contains some R code. This is an R script file. Let us have a look at the contents of it :
+```{r}
+cat(readLines("commands.R"), sep="\n") 
+```
+
+The run the R commands that are contained within a script file, use the function *source()* : 
+```{r}
+source("commands.R")
+```
+
+It is possible to redirect the output of running commands and functions into a text file on disk using *sink()*. The function *sink()* will divert all subsequent output from the console to an external file, ‘record.lis’. The second call will close the file.
+```{r}
+sink("record.lis")
+i <- 1:30
+outer(i, i, "*")
+sink()
+```
+
+To make sure the file exists on the filesystem : 
+```{r}
+list.files(".","record")
+```
+
+The first variable to function *list.files()* is the directory to search under (here, the current working directory as denoted by "."). The second argument is the regular expressions (Regex) pattern for searching the file. For more information on Regex, refer to this course by [Gloria Li and Jenny Bryan](http://stat545.com/block022_regular-expression.html).
+
+Note that Regex is an advanced, hairy subject. If you are more comfortable with simple shell globing, you can use *glob2rx()* to obtain the same results :
+```{r}
+list.files(".",glob2rx("rec*"))
+```
+
+To obtain the size of the file in bytes, use the utility function "file.size()":
+```{r}
+file.size("record.lis")
+```
+
+## Saving workspace contents
 ```{r}
 ls()
 save.image("binary_dosya_ismi.RData")
@@ -52,7 +104,7 @@ ls()
 file.remove(c("binary_dosya_ismi.RData","variable_a.RData"))
 ```
 
-## Yeni kullanıcı kabusları (Error, warning)
+## Errors, warnings
 ```{r eval=FALSE}
 45 - "dffd"
 ```
@@ -117,11 +169,7 @@ The entities that R creates and manipulates are known as *variables* or *objects
 a <- mtcars
 objects()
 ```
-The above command lists the objects currently stored in the memory of R (which is also called, workspace). 
-
-To gather more information about an object, try to following utility functions : *length()*, *dim()*, *names()*, *head()*, *tail()* and *summary()*. 
-
-To remove objects from the memory (use with care, no recovery is possible if you don't have a backup), use the function *rm()* :
+The above command lists the objects currently stored in the memory of R (which is also called, workspace).To gather more information about an object, try to following utility functions : *length()*, *dim()*, *names()*, *head()*, *tail()* and *summary()*. To remove objects from the memory (use with care, no recovery is possible if you don't have a backup), use the function *rm()* :
 ```{r}
 rm(a)
 ls()
@@ -562,7 +610,7 @@ f178 <- function (formula, subsetmethod = "qr",  model = TRUE, x = offset, ...)
 R uses *connections* when dealing with data files. At R prompt type ?connections for more information.
 
 ## Datasets coming with R
-https://vincentarelbundock.github.io/Rdatasets/datasets.html
+The datasets that come with R are listed in the following web address: https://vincentarelbundock.github.io/Rdatasets/datasets.html
 
 ## Data input
 Below is the list of main data import options present in R.
@@ -583,7 +631,8 @@ Below is the list of main data import options present in R.
 
 ```{r}
 quakes_url <- "https://vincentarelbundock.github.io/Rdatasets/csv/datasets/quakes.csv"
-read.csv(quakes_url)
+q <- read.csv(quakes_url)
+head(q)
 ```
 
 ### Exercise
