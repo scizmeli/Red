@@ -1,0 +1,621 @@
+---
+title: Introduction to R Programming
+output: 
+  html_document:
+    toc: true
+    theme: united
+    toc_float: true
+---
+Servet Ahmet Çizmeli, [PranaGEO Ltd.](https://pranageo.com)
+
+This education has been compiled by slightly modifying a subset of the contents of the following documents : 
+
+- An Introduction to R http://cran.r-project.org/doc/manuals/R-intro.pdf
+- R Data Import/Export http://cran.r-project.org/doc/manuals/R-data.pdf
+- R Installation and Administration http://cran.r-project.org/doc/manuals/R-admin.pdf
+
+# Basic tools to interact with R
+
+## The help system
+```{r eval=FALSE}
+?help
+help("plot")
+help.search("plot")
+```
+
+## Çalışma ortamının saklanması
+```{r}
+ls()
+save.image("binary_dosya_ismi.RData")
+```
+
+```{r}
+list.files(pattern = "binary")
+```
+
+```{r}
+a <- 1:81
+save(a, file = "variable_a.RData")
+```
+
+```{r}
+rm(list = ls())
+ls()
+```
+
+```{r}
+load("binary_dosya_ismi.RData")
+ls()
+```
+
+```{r}
+file.remove(c("binary_dosya_ismi.RData","variable_a.RData"))
+```
+
+## Yeni kullanıcı kabusları (Error, warning)
+```{r eval=FALSE}
+45 - "dffd"
+```
+
+```{r eval=FALSE}
+data.frame(1:3,)
+```
+
+```{r}
+log(-4)
+print("still works")
+```
+
+## Current working directory
+When we need to access files in the operating system's filesystem from R, the *current working directory* plays an important role. To get the current directory, use *getwd()*:
+```{r}
+getwd()
+```
+To change the current working directory, use *setwd()* :
+```{r  eval=FALSE}
+#Create a new sub-directory
+dir.create("some_existing_directory")
+```
+
+Set the current directory to the new sub-directory :
+```{r eval=FALSE}
+setwd("some_existing_directory")
+getwd()
+```
+
+Set the current directory to original (top-level) directory :
+```{r  eval=FALSE}
+setwd("..")
+```
+
+```{r eval=FALSE}
+#Remove the newly created directory
+file.remove("some_existing_directory")
+```
+
+## Creating and listing files
+R will be able to find the files residing in the current directory without needing any additional path information. For example, all the files and directories listed with the below command are inside the current working directory :
+```{r}
+#Let's create an empty text file on filesystem
+file.create("test_file.txt")
+```
+The first variable to function *list.files()* is the directory to search under (here, the current working directory as denoted by "."). The second argument is the regular expressions (Regex)  pattern for searching the file. For more information on Regex, refer to this course by [Gloria Li and Jenny Bryan](http://stat545.com/block022_regular-expression.html). Note that Regex is an advanced subject. If you are more comfortable with simple shell globing, you can use *glob2rx()* to search files whose names begin with *"test_"* :
+
+```{r}
+list.files(".", glob2rx("test_*"))
+```
+To obtain the size of the file in bytes, use the utility function "file.size()":
+```{r}
+file.size("test_file.txt")
+```
+**See Also :** *list.dirs()*, *dir()*, *file.copy()*, *file.exists()*, *file.path()*,
+*file.rename()*
+
+# Working with variables and memory
+The entities that R creates and manipulates are known as *variables* or *objects*. These may be variables, arrays of numbers, character strings, functions, or more general structures built from such components. During an R session, objects are created and stored by name inside the global environment. The R commands *objects()* and *ls()* save the same purpose of listing the name of variables available in the currently workspace : 
+```{r}
+a <- mtcars
+objects()
+```
+The above command lists the objects currently stored in the memory of R (which is also called, workspace). 
+
+To gather more information about an object, try to following utility functions : *length()*, *dim()*, *names()*, *head()*, *tail()* and *summary()*. 
+
+To remove objects from the memory (use with care, no recovery is possible if you don't have a backup), use the function *rm()* :
+```{r}
+rm(a)
+ls()
+```
+
+R supports the folowing native data types out of box : 
+
+| Data Type        | Explanation | Examples |
+| ------------- |:-------------:|:-------------:|
+|<img width=100/>|<img width=200/>|
+| *numeric* | Numeric values | c(12.3,1e5) |
+| *character* | Strings  | "Hello world" |
+| *factors* | Categorical Variables | as.factor("January","February","March") |
+| *logical* | Binary values | c(TRUE,FALSE) |
+| *list* | Numeric values | list(Name="John",age=12) |
+| *matrix* | 2-d Matrix, same types | matrix(c(1,2,3,4),nrow = 2) |
+| *data.frame* | 2-d Table, mixed types | data.frame(Name=c("John","Alice"),Age=c(12,14)) |
+| *complex* | Complex numbers | 3 + 4i |
+
+<br>
+Note that the function *c()* produces a *vector*. In R, a vector is a one-dimensional list of values. One can put any type of data values together inside a vector. The only condition is that all the elements of the vector are of same type.
+
+## Variable assignment
+We previously saw that the function *c()* makes a concatenation of scalar numbers to form a vector. We can also assigned to the variable *x* using one of the following operators : *<-*, *->*, *=* :
+```{r}
+c(-4,2,5,4,12,66,0,8,9) -> idx 
+idx
+```
+An assignment can also be made using the function *assign()*, offering an equivalent way where the name of the target variable can be stored in another variable. This can be very useful for advanced programming :
+```{r}
+varname = "temp"
+assign(varname, c(10.4, 5.6, 3.1, 6.4, 21.7))
+temp
+```
+
+## Variable Subsetting with Index vectors
+Subsets of the elements of a vector may be selected by appending to the name of the vector an index vector in square brackets. More generally any expression that evaluates to a vector may  have subsets of its elements similarly selected by appending an index vector in square brackets immediately after the expression. 
+
+Such index vectors can be any of four distinct types.
+
+### 1. Indexing with a logical vector. 
+
+```{r}
+x=c(1,2,NA,6,NA,923)
+x
+y <- x[!is.na(x)] 
+y 
+```
+### 2. Indexing with a vector of positive integral quantities. 
+In this case the values in the index vector must lie in the set {1, 2, . . . , length(x)}. The corresponding elements of the vector are selected and concatenated, in that order, in the result. The index vector can be of any length and the result is of the same length as the index vector. For example x[6] is the sixth component of x. Try :
+```{r}
+x
+x[c(2,1,3)]
+```
+selects the first 10 elements of x (assuming *length(x)* is not less than 10). With ghe following command one can generate a complex multiple combination of elements of x : 
+```{r}
+var11 <- rep(c(1,2,2,1), times=2)
+var11
+c("x","y")[var11] 
+```
+### 3. Indexing with a vector of negative integral quantities
+Such an index vector specifies the values to be excluded rather than included. Thus 
+```{r}
+x
+y <- x[-(1:5)]
+y
+```
+assigns all but the first five elements of *x* to *y*. 
+
+### 4. Indexing with a vector of character strings
+This possibility only applies where an object has a *names* attribute to identify its components. In this case a sub-vector of the names vector may be used in the same way as the positive integral labels in item 2 further above. 
+```{r}
+fruit <- c(5, 10, 1, 20) 
+names(fruit) <- c("orange", "banana", "apple", "peach") 
+fruit
+lunch <- fruit[c("apple","orange")] 
+lunch
+```
+The advantage is that alphanumeric names are often easier to remember than numeric indices. This option is particularly useful in connection with *data frames*, as we shall see later. 
+
+## Using indexes to assign values to part of objects
+An indexed expression can also appear on the receiving end of an assignment, in which case the assignment operation is performed only on those elements of the vector. The expression must be of the form *vector[index_vector]* as having an arbitrary expression in place of the vector name does not make much sense here. 
+
+The vector assigned must match the length of the index vector, and in the case of a logical index vector it must again be the same length as the vector it is indexing. For example :
+```{r}
+x<- c(x, NA)
+x[is.na(x)] <- 0
+x
+```
+replaces any missing values in *x* by zeros. On the other hand :
+```{r}
+y=c(1,-2,3,-4,5)
+y
+y[y < 0] <- -y[y < 0] 
+y
+```
+has the same effect as using the *abs()* that computes the absolute values in a given variable :
+```{r}
+y <- abs(y)
+y
+```
+
+## Missing values
+In some cases the components of a vector may not be completely known. When an element
+or value is “not available” or a “missing value” in the statistical sense, a place within a vector may be reserved for it by assigning it the special value NA. In general any operation on an *NA* becomes an *NA*. The motivation for this rule is simply that if the specification of an operation is incomplete, the result cannot be known and hence is not available.
+
+The function *is.na()* gives a logical vector of the same size as x with value *TRUE* if and only if the corresponding element in x is *NA*.
+```{r}
+z <- c(1:3,NA); 
+z
+length(z)
+ind <- is.na(z)
+ind
+```
+Note that there is a second kind of “missing” values which are produced by numerical computation, the so-called *Not a Number*, *NaN*, values. Examples are :
+```{r}
+0/0
+Inf - Inf
+```
+which both give *NaN* since the result cannot be defined sensibly. The function *is.na()* is *TRUE* both for *NA* and *NaN* values. To differentiate these, *is.nan()* is only *TRUE* for an *NaN* :
+```{r}
+is.nan(NA)
+is.nan(NaN)
+```
+
+### Exercise
+To increase the readability of the resulting `data.frame` object `f`, sort the table in descending order of `meas` values.
+
+# Native variable types in R
+## Numeric vectors
+Numeric Vectors can be used in arithmetic expressions, in which case the operations are performed element by element without having to write a for loop :
+```{r}
+v <- 2*temp + 1
+v
+```
+
+### The "names" attributes
+It is possible to give *names* to every element of a vector :
+```{r}
+v
+print(names(v)) #no names
+```
+
+```{r}
+names(v)<- c("meals","hotel","transport","souvenirs","varia")
+v
+```
+
+When we have a named variable, we can reference/subset its elements on using names :
+```{r}
+v["hotel"]
+```
+Use the function *names()* to extract names in string format from a named vector :
+```{r}
+names(v)
+```
+
+## Characters
+To assign a character to an object, use *"* or *'*:
+```{r}
+a <- "Working with characters ' is possible in R"
+b <- 'There one containing "one word"'
+a
+class(b)
+```
+The *paste()* function takes an arbitrary number of arguments and concatenates them one by one into character strings :
+```{r}
+labs <- paste(c("X","Y"), 1:13, sep="||")
+labs <- paste("hello", "world", sep="&")
+labs
+```
+See also : strrep(), strsplit(), grep(), gsub()
+
+## Classification data (factor)
+```{r}
+meas <- round(runif(10)*100,2)
+
+mylevels <- c('high','medium','low')
+myclass <- character(10)
+myclass[meas < 50] <- "low"
+myclass[meas >= 50 & meas < 80] <- "medium"
+myclass[meas >= 80] <- "high"
+
+f <- data.frame(measurement=meas, class=myclass)
+print(f)
+```
+
+## Data Frames
+Data frames (*data.frame*) is the fundamental data type in R. One can think of it as a collectin of vectors of equal length put in columns side by sidde to form a table. To 
+
+### Creating a data.frame from R variables
+```{r}
+data.frame(Name=c("John","Alice"),Age=c(12,14), Country=c("Denmark","Turkey"))
+```
+
+### Creating a data.frame by importing CSV file
+We can import csv data directly into data.frame using *read.csv()* and *read.csv2()* :
+```{r}
+flo <- read.csv("https://vincentarelbundock.github.io/Rdatasets/csv/carData/Florida.csv")
+head(flo)
+```
+
+### Exercise
+To practice variaous R data types, let's use the [Maps That Changed Our World](https://www.arcgis.com/home/item.html?id=72f29810c72043358d7b2bad4c2f22c9) dataset to meet some of native data types. Let us have a look at the first 3 lines of the file :
+```{r}
+download.file("https://raw.githubusercontent.com/scizmeli/Red/master/MapsThatChangedOurWorld_StoryMap_Data.csv","MapsThatChangedOurWorld_StoryMap_Data.csv")
+cat(readLines("MapsThatChangedOurWorld_StoryMap_Data.csv",n = 3), sep="\n") 
+```
+Inspecting the first three lines, we see that the columns of this csv dataset are separated by the character **";"** and the first line looks like it contains column headers. To import this csv file, we have several options. R comes with base tools that can read csv files : *read.csv()*, *read.table()*, *read.delim()*, *read.delim2()*, *data.table::fread()*. Note that the *fread()* function is part of package *data.table*. 
+
+For this task, we will use *read.csv2()* :
+
+```{r}
+maps <- read.csv2("MapsThatChangedOurWorld_StoryMap_Data.csv",sep = ";")
+colnames(maps)[5] <- "Title"
+maps[,1:7]
+```
+
+Note that we use the input argument *sep* to tell *read.csv2()* to use that character as a separator string. The resulting object *maps* is of type *data.frame*, which is the most popular data type in R. It stores data in a table structure, with multiple rows and columns. A *data.frame* gives the user ability to store different data types at each column. Each row and column can also have a name. In this dataset, each column has a name and the column names are stored in the first row of the csv file. 
+
+Inspecting the generated *data.frame*, we can see that all the columns have been input as type *factor*. This reason for this is that the strings in an external data file are imported by default as *factor*. If  R can find any *numeric* type, it will recognize and assign a *numeric* column for it. The reason why columns *Latitude* and *Longitude* are first taken to be *character* is the presence of charactrers *E*, *W* and *N*, then converted to *factor* by *read.csv2()*. Also, the reason why the column **Year** is of type *character* is the presence of the string *AD* in the first line. We will have to process the data later on to obtain numeric variables inside these columns.
+
+As stated above, the columns **Latitude** and **Longitude** in the sample *data.frame* are indeed meant to be numeric values. They are the geographical representation of latitude and longitude data where *N* denotes the northern hemisphere and *W* denotes the western hemisphere. In order to convert these columns to *numeric*, we need to take away these letters and make the eastern hemispherical longitudes negative.
+
+```{r}
+maps$Latitude <- gsub("N", "", maps$Latitude)
+maps$Longitude <- gsub("W","", maps$Longitude)
+index <- grep(" E", maps$Longitude)
+maps$Longitude <- gsub("E","", maps$Longitude)
+
+maps$Latitude <- as.numeric(maps$Latitude)
+maps$Longitude <- as.numeric(maps$Longitude)
+maps$Longitude[index] <- -1*maps$Longitude[index]
+```
+**Notes**
+
+- We used function *gsub()* to search and replace a string in a vector of strings
+- We used function *grep()* to return the position index of elements in a vector of strings that contain a search token (in this case the lines containing the token character *E*)
+- We used the function *as.numeric()* to convert strings into numeric values.
+- We multiplied the rows containing the teken character *E* by -1 to negate these values.
+
+We also have to perform a similar operation on the Year column to make the column entirely numeric, i.e. *class(maps$Year)* becomes equal to *"numeric"*
+```{r}
+index2 <- grep("AD", maps$Year)
+maps$Year <- gsub("AD","", maps$Year)
+maps$Year <- as.numeric(maps$Year)
+```
+The above notation took a 3-column subset of the original data.frame via column name selection.
+```{r}
+maps[,c("Longitude","Latitude","Year")]
+```
+
+## Logical vectors
+Logical vectors are usually generated by logical tests. For example :
+```{r}
+temp
+c1 = temp > 13
+c2 = temp > 13 | temp <5
+c2
+```
+The newly created variable *c1* is of type **logical** i.e. *class(c1)* is equal to *"`r class(c1)`"* . We can use logical variables to subset a variable :
+```{r}
+data.frame(temp, c1)
+temp[c1]
+```
+
+### Logical Operators
+Only the elements of *x* where the corresponding element in *c1* is TRUE are matched.
+
+| Operator        | Name           |
+| ------------- |:-------------:|
+| *<* | less than |
+| *<=* | less than or equal to |
+| *>* | greater than |
+| *>=* | greater than or equal to |
+| *==* | exact equality |
+| *!=* | exact inequality |
+| *!* | negation |
+| *&* | AND |
+| *\|* | OR |
+
+As an example, if *c1* and *c2* are two logical variables, then following AND operation returns their intersection :
+
+```{r}
+data.frame(c2, c1)
+c2 | c1
+```
+while the following OR operation returns their union : 
+```{r}
+c1 | c2
+```
+The negation operator *!* would negate the elements of its input logical variable (FALSE would become *TRUE* and vice versa).
+
+
+# Control Flow with conditional and loop constructs
+## Conditional if
+In matrix-based languages like R, the conditional `if` is used 
+less often.
+
+```{r}
+condition <- "negative"
+if (condition == "negative"){
+  output <- FALSE
+} else {
+  output <- TRUE
+}
+print(output)
+```
+
+### Exercise
+Modify the exercise above for creating factors so that instead of using indexes, we can determine classes using *if* control statement.
+```{r}
+meas <- round(runif(10)*100,2)
+mylevels <- c('high','medium','low')
+myclass <- character(10)
+### Your code here ###
+
+### Your code here ###
+```
+
+
+## Traditional "for" loops
+## One-line loops
+```{r}
+for (I in 1:5) print(paste("This is loop iteration:", I))
+```
+
+## Multiple-line loops
+```{r}
+for (I in 1:5) {
+  var <- I
+  print(paste("This is loop iteration:", var))
+}
+```
+
+### Exercise
+Produce same output without using a `for` loop. 
+
+See also : `while` and `repeat`
+
+## *apply function family
+
+The argument **X** that the apply family of functions need is the input source. The argument **FUN** is a variable of type *function* and is "applied" to all elements of **X**. It can be a built-in function like *mean* or it can be a function custom-made by ourselves.
+
+Let us first create a *list* object that will act as **X** :
+
+```{r}
+emp1 <- list(Name="Alice",Gender="F", Age=23)
+emp2 <- list(Name="John",Gender="M", Age=20, Language=c("tr","fr"))
+emp3 <- list(Name="Zed",Gender="M", Age=32, Language=c("en","es"))
+employees <- list(emp1, emp2, emp3)
+employees
+```
+
+## sapply & lapply
+Let us run sapply to "extract" the age information stored in the employee database into an R numeric vector :
+
+```{r}
+sapply(employees, function(x) x$Age)
+```
+
+### Exercise 
+Now try the same with *lapply*. What is the difference?
+
+## apply
+apply() is like *sapply()* and *lapply()*, but is customized for 2-dimensional arrays. The second argument to apply() is the dimension along which to run the function. Let us apply the built-in function *mean* to calculate the mean values in  Florida 2000 election votes :
+```{r}
+flo <- read.csv("https://vincentarelbundock.github.io/Rdatasets/csv/carData/Florida.csv")
+head(flo)
+""
+```
+
+To calculate sum of votes for each candidate, use :
+```{r}
+apply(flo[,2:11],2, mean)
+```
+
+To calculate sum of votes for each county, use :
+```{r}
+county_sums <- apply(flo[,2:11],1, sum)
+```
+
+Now let's verify if the sums we just computed match the column names "Total" : 
+```{r}
+#Method 1
+all(county_sums == flo$Total)
+
+#Method 2
+all.equal(county_sums, flo$Total)
+```
+
+## tapply
+The function tapply applies **FUN** over **X** according to group criteria by the input factor **INDEX**. 
+
+```{r}
+baseball.example <-
+  data.frame(team = gl(5, 5, labels = paste("Team", LETTERS[1:5])),
+             player = sample(letters, 25),
+             batting.average = runif(25, .200, .400))
+baseball.example
+```
+
+```{r}
+tapply(baseball.example$batting.average, baseball.example$team, max)
+
+```
+
+See https://www.r-bloggers.com/r-function-of-the-day-tapply-2 for a full explanation of the *tapply* example.
+
+# Functions
+R is a modular language and is therefore optimized for programming through functions. Anatomy of functions in R can be displayed as follows :
+
+```{r eval=FALSE}
+> 
+f178 <- function (formula, subsetmethod = "qr",  model = TRUE, x = offset, ...) 
+{
+    ret.x <- x
+    ret.y <- y
+
+    ...
+    
+    output
+}
+```
+
+- A function can have 0 or more named input arguments (formula, data, ...)
+- Function body is the code that is within curly braces "{ }"
+- Some arguments can have default values (method="qr")
+- If you are happy with the default value, you can omit that argument
+- Three points "..." indicate non-defined arguments can be additionally provided
+- Functions, when defined, can be assigned to variables. These variables become of native R type called *function* (like *numeric*, *data.frame* etc.)
+- If the function body consists of one single line, one cam ommit curly braces  "{ }"
+- Functions are evaluated in their own workspace. When the functions exits, the contents of the function workspace are destroyed
+- The last expression evaluated within the body of the function is returned (in this case, the contents of the variable *output* is assigned to variable *f178* when function exits)
+
+# Data input and output
+## Connections
+R uses *connections* when dealing with data files. At R prompt type ?connections for more information.
+
+## Datasets coming with R
+https://vincentarelbundock.github.io/Rdatasets/datasets.html
+
+## Data input
+Below is the list of main data import options present in R.
+
+| Import Method        | Explanation |
+| ------------- |-------------|
+| cat()         | Prints contents. Used both in data import and export|
+| download.file()  |  File download from R |
+| read.csv()  | Input .csv file into a data.frame |
+| read.table()  | Input text file into a data.frame |
+| readLines()  | Import text file contents into a character variable |
+| File -> Import Dataset | Rstudio import gadgets|
+| jsonlite::fromJSON() | Import from JSON format into R list|
+| readBin() | Read binary data from connection|
+| readxl::read_excel() | Import data from Excel file|
+| png::readPNG(), jpeg::readJPEG(), tiff::readTIFF()| Import RGB images|
+
+
+```{r}
+quakes_url <- "https://vincentarelbundock.github.io/Rdatasets/csv/datasets/quakes.csv"
+read.csv(quakes_url)
+```
+
+### Exercise
+Create the same output with *read.table()*
+
+### Exercise
+Download the file *quakes.csv* on hard disk and read its 5 first lines directly into a character array. Then create a *data.frame* object from the contents of this *char* variable.
+
+### Exercise
+Import contents of file "rows.json" from link https://data.lacity.org/api/views/nxs9-385f/rows.json?accessType=DOWNLOAD. The JSON file contains a matrix content in subfield *data* where numerical values are stored as characters. Convert these to class *numeric*.
+
+## Data output
+Below is the list of main data export options present in R.
+
+| Export Method        | Explanation |
+| ------------- |-------------|
+| cat()         | Prints contents. Used both in data import and export|
+| write.csv()  | Export .csv file into a data.frame |
+| jsonlite::toJSON() | Export into JSON  format|
+| tempdir() | Create a temporary directory name for data export/storage|
+| tempfile() | Create a temporary file name for data export/storage|
+| writeBin() | Write binary data to connection |
+| xlsx::read.xlsx() | Read and write data from/to Excel files|
+| png::writePNG(), jpeg::writeJPEG(), tiff::writeTIFF()| Export RGB images|
+
+## Database connections
+The R packages *RODBC* and the more recent *DBI* offer a unified interface for various SQL databases. Individual packages *RMySQL*, *ROracle*, *RPostgreSQL* and *RSQLite* support more sophisticated operations for MySQL, Oracle, PostgreSQL and sqlite databases respectively.
+
+It is also possible to i/o data from NoSQL databases. Refer to packages *RMongo*, *mongolite*, 
+
+## Scientific data formats
+R packages *h5*, *rhdf5*, *RNetCDF* and *ncdf4* allow i/o operations from scientific data formats HDF5 and netcdf. These read/write operations are complex, so refer to those package documentation for more information.
+
+## GIS data formats
+R packages *rgdal* and *sf* offer interfaces for reading/writing various types of geospatial data formats. 

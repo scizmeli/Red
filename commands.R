@@ -1,2 +1,2 @@
-t=34
-print(t)
+tt<- 25
+print(tt)

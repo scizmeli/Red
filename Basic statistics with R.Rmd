@@ -1,0 +1,34 @@
+---
+title: "Basic statistics with R"
+output: 
+  html_document:
+    toc: true
+    theme: united
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Temel istatistik komutları 
+## Ortalama 
+## Standard sapma
+## Varyans
+## Korelasyon
+
+# Değişken tipleri 
+## Nicel
+## Sürekli, süreksiz
+## Nitel
+
+# Dağılımlar
+## Normal dağılım
+## Üstel Dağılım
+## Binom
+## Poisson
+
+# Rasgele Veri Türetilmesi
+
+# Problemler
