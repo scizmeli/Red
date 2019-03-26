@@ -347,7 +347,7 @@ See also : strrep(), strsplit(), grep(), gsub()
 ```{r}
 meas <- round(runif(10)*100,2)
 
-mylevels <- c('high','medium','low')
+#mylevels <- c('high','medium','low')
 myclass <- character(10)
 myclass[meas < 50] <- "low"
 myclass[meas >= 50 & meas < 80] <- "medium"
@@ -357,12 +357,23 @@ f <- data.frame(measurement=meas, class=myclass)
 print(f)
 ```
 
+### Exercise
+Modify the exercise above for creating factors so that instead of using indexes, we can determine classes using *if* control statement.
+```{r}
+meas <- round(runif(10)*100,2)
+mylevels <- c('high','medium','low')
+myclass <- character(10)
+### Your code here ###
+
+### Your code here ###
+```
+
 ## Data Frames
 Data frames (*data.frame*) is the fundamental data type in R. One can think of it as a collectin of vectors of equal length put in columns side by sidde to form a table. To 
 
 ### Creating a data.frame from R variables
 ```{r}
-data.frame(Name=c("John","Alice"),Age=c(12,14), Country=c("Denmark","Turkey"))
+data.frame(Name=c("John","Alice"), Age=c(12,14), Country=c("Denmark","Turkey"))
 ```
 
 ### Creating a data.frame by importing CSV file
@@ -372,14 +383,6 @@ flo <- read.csv("https://vincentarelbundock.github.io/Rdatasets/csv/carData/Flor
 head(flo)
 ```
 
-### Exercise
-To practice variaous R data types, let's use the [Maps That Changed Our World](https://www.arcgis.com/home/item.html?id=72f29810c72043358d7b2bad4c2f22c9) dataset to meet some of native data types. Let us have a look at the first 3 lines of the file :
-```{r}
-download.file("https://raw.githubusercontent.com/scizmeli/Red/master/MapsThatChangedOurWorld_StoryMap_Data.csv","MapsThatChangedOurWorld_StoryMap_Data.csv")
-cat(readLines("MapsThatChangedOurWorld_StoryMap_Data.csv",n = 3), sep="\n") 
-```
-Inspecting the first three lines, we see that the columns of this csv dataset are separated by the character **";"** and the first line looks like it contains column headers. To import this csv file, we have several options. R comes with base tools that can read csv files : *read.csv()*, *read.table()*, *read.delim()*, *read.delim2()*, *data.table::fread()*. Note that the *fread()* function is part of package *data.table*. 
-
 For this task, we will use *read.csv2()* :
 
 ```{r}
@@ -387,6 +390,15 @@ maps <- read.csv2("MapsThatChangedOurWorld_StoryMap_Data.csv",sep = ";")
 colnames(maps)[5] <- "Title"
 maps[,1:7]
 ```
+
+
+### Exercise
+To practice variaous R data types, let's use the [Maps That Changed Our World](https://www.arcgis.com/home/item.html?id=72f29810c72043358d7b2bad4c2f22c9) dataset to meet some of native data types. Let us have a look at the first 3 lines of the file :
+```{r}
+download.file("https://raw.githubusercontent.com/scizmeli/Red/master/MapsThatChangedOurWorld_StoryMap_Data.csv","MapsThatChangedOurWorld_StoryMap_Data.csv")
+cat(readLines("MapsThatChangedOurWorld_StoryMap_Data.csv",n = 3), sep="\n") 
+```
+Inspecting the first three lines, we see that the columns of this csv dataset are separated by the character **";"** and the first line looks like it contains column headers. To import this csv file, we have several options. R comes with base tools that can read csv files : *read.csv()*, *read.table()*, *read.delim()*, *read.delim2()*, *data.table::fread()*. Note that the *fread()* function is part of package *data.table*. 
 
 Note that we use the input argument *sep* to tell *read.csv2()* to use that character as a separator string. The resulting object *maps* is of type *data.frame*, which is the most popular data type in R. It stores data in a table structure, with multiple rows and columns. A *data.frame* gives the user ability to store different data types at each column. Each row and column can also have a name. In this dataset, each column has a name and the column names are stored in the first row of the csv file. 
 
@@ -479,18 +491,6 @@ if (condition == "negative"){
 print(output)
 ```
 
-### Exercise
-Modify the exercise above for creating factors so that instead of using indexes, we can determine classes using *if* control statement.
-```{r}
-meas <- round(runif(10)*100,2)
-mylevels <- c('high','medium','low')
-myclass <- character(10)
-### Your code here ###
-
-### Your code here ###
-```
-
-
 ## Traditional "for" loops
 ## One-line loops
 ```{r}
@@ -539,17 +539,17 @@ apply() is like *sapply()* and *lapply()*, but is customized for 2-dimensional a
 ```{r}
 flo <- read.csv("https://vincentarelbundock.github.io/Rdatasets/csv/carData/Florida.csv")
 head(flo)
-""
 ```
 
 To calculate sum of votes for each candidate, use :
 ```{r}
-apply(flo[,2:11],2, mean)
+apply(flo[,2:11],2, sum)
 ```
 
 To calculate sum of votes for each county, use :
 ```{r}
 county_sums <- apply(flo[,2:11],1, sum)
+county_sums
 ```
 
 Now let's verify if the sums we just computed match the column names "Total" : 
@@ -574,7 +574,6 @@ baseball.example
 
 ```{r}
 tapply(baseball.example$batting.average, baseball.example$team, max)
-
 ```
 
 See https://www.r-bloggers.com/r-function-of-the-day-tapply-2 for a full explanation of the *tapply* example.
@@ -589,9 +588,10 @@ f178 <- function (formula, subsetmethod = "qr",  model = TRUE, x = offset, ...)
     ret.x <- x
     ret.y <- y
 
+    f123(ret.x, ret.y, ...)
     ...
     
-    output
+    output = x * y 
 }
 ```
 
@@ -651,7 +651,8 @@ Below is the list of main data export options present in R.
 | ------------- |-------------|
 | cat()         | Prints contents. Used both in data import and export|
 | write.csv()  | Export .csv file into a data.frame |
-| jsonlite::toJSON() | Export into JSON  format|
+| write.table() | Export data.frame as .csv file |
+| jsonlite::toJSON() | Export list into JSON format|
 | tempdir() | Create a temporary directory name for data export/storage|
 | tempfile() | Create a temporary file name for data export/storage|
 | writeBin() | Write binary data to connection |

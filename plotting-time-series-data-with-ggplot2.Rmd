@@ -1,0 +1,61 @@
+
+---
+title: Plotting time series data with ggplot2
+output: 
+  html_document :
+    toc: true
+    theme: united
+    toc_float: true
+---
+The original version of this article has been published at [sthda.com](http://www.sthda.com/english/articles/32-r-graphics-essentials/128-plot-time-series-data-using-ggplot).
+
+In this chapter, we start by describing how to plot simple and multiple time series data using the R function geom_line() [in ggplot2].
+
+Next, we show how to set date axis limits and add trend smoothed line to a time series graphs. Finally, we introduce some extensions to the ggplot2 package for easily handling and analyzing time series objects.
+
+Additionally, you’ll learn how to detect peaks (maxima) and valleys (minima) in time series data.
+
+```{r}
+library(ggplot2)
+theme_set(theme_minimal())
+
+# Demo dataset
+str(economics)
+```
+
+# Basic line plot
+```{r}
+ggplot(data = economics, aes(x = date, y = pop))+
+  geom_line(color = "#00AFBB", size = 2)
+```
+
+# Plot a subset of the data
+```{r}
+ss <- subset(economics, date > as.Date("2006-1-1"))
+ggplot(data = ss, aes(x = date, y = pop)) + 
+  geom_line(color = "#FC4E07", size = 2)
+```
+
+To control line size by the value of a continuous variable:
+```{r}
+ggplot(data = economics, aes(x = date, y = pop)) +
+  geom_line(aes(size = unemploy/pop), color = "#FC4E07")
+```
+
+# Plot multiple time series data
+Here, we’ll plot the variables psavert and uempmed by dates. You should first reshape the data using the tidyr package: - Collapse psavert and uempmed values in the same column (new column). R function: gather()[tidyr] - Create a grouping variable that with levels = psavert and uempmed
+```{r}
+library(tidyr)
+library(dplyr)
+df <- economics %>%
+  select(date, psavert, uempmed) %>%
+  gather(key = "variable", value = "value", -date)
+str(df)
+```
+```{r}
+# Multiple line plot
+ggplot(df, aes(x = date, y = value)) + 
+  geom_line(aes(color = variable), size = 1) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+  theme_minimal()
+```
