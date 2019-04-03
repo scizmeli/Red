@@ -1,0 +1,88 @@
+---
+title: "Introduction to programming with R - Exercises"
+output: html_notebook
+---
+
+
+The following code imports sample data points from the carbon project :
+```{r}
+library(sf)
+library(leaflet)
+setwd("~/Documents/R base ve R Studio Temel İslemler/organik/")
+or <- st_read("Organik_MAdde.shp")
+class(or)
+or
+```
+
+
+
+The following code allows us to plot the geographic distribution of data points on an interactive map using leaflet :
+```{r}
+leaflet(data=or) %>%
+  addTiles() %>% 
+  addCircles(lng = ~Enlem, lat=~Boylam)
+
+```
+
+## Exercise 1
+Extract the names of non-geographic variables in `or` and store it in a variable of type *character*. You have to eliminate the name of the geometry column from the list.
+```{r}
+
+```
+
+## Exercise 2
+Convert the column *Seviye_3_A* to type *character*.
+```{r}
+
+```
+
+## Exercise 3
+Create a new *data.frame* object, with only the following 7 columns :
+Karbon, OrganikMad, OrganikKar, Kil, Kum, Silt, HacimAgirl. For this exercise, use tools from dplyr package.
+```{r}
+
+```
+
+## Exercise 4
+Display summary statistics of these 7 columns.
+```{r}
+
+```
+
+## Exercise 5
+Extract the unique names of the classes stored in column *AraziKulla* and store the information in a character variable.
+```{r}
+
+```
+
+## Exercise 6
+Calculate the mean values of the same 7 columns separately for column *AraziKulla*. For this, use tools from dplyr package.
+```{r}
+
+```
+
+## Exercise 7
+Use function *cut()* to divide values of column *Karbon* into 5 classes (5 intervals). Store the resulting factor in data.frame as a new column called *I1*.
+```{r}
+
+```
+
+# Exercise 8
+Use tools from package *ggplot2* to make a scatterplot values column *OrganikMad* with respect to values of column *Kil*. Use values from column *I1* for dot colours and values from column *Aridite* (eliminate negative Aridite values). 
+```{r}
+
+```
+
+# Exercise 9
+The map created above has been drawn in geographic coordinates. In this exercise, draw the same map in geographic projections that came with the dataset. 
+Hint 1 : Use coordinate columns "POINT_X" "POINT_Y"
+Hint 2 : Make sure *leaflet* knows what projection you are using
+```{r}
+
+```
+
+# Exercise 10
+Modify the map in such a way that the point sizes in the map are proportional to values of column *Silt* and point colors are determined according to class information stored in column *Seviye_1_A*
+```{r}
+
+```
