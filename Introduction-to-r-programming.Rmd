@@ -205,6 +205,29 @@ assign(varname, c(10.4, 5.6, 3.1, 6.4, 21.7))
 temp
 ```
 
+## Missing values
+In some cases the components of a vector may not be completely known. When an element
+or value is “not available” or a “missing value” in the statistical sense, a place within a vector may be reserved for it by assigning it the special value NA. In general any operation on an *NA* becomes an *NA*. The motivation for this rule is simply that if the specification of an operation is incomplete, the result cannot be known and hence is not available.
+
+The function *is.na()* gives a logical vector of the same size as x with value *TRUE* if and only if the corresponding element in x is *NA*.
+```{r}
+z <- c(1:3,NA); 
+z
+length(z)
+ind <- is.na(z)
+ind
+```
+Note that there is a second kind of “missing” values which are produced by numerical computation, the so-called *Not a Number*, *NaN*, values. Examples are :
+```{r}
+0/0
+Inf - Inf
+```
+which both give *NaN* since the result cannot be defined sensibly. The function *is.na()* is *TRUE* both for *NA* and *NaN* values. To differentiate these, *is.nan()* is only *TRUE* for an *NaN* :
+```{r}
+is.nan(NA)
+is.nan(NaN)
+```
+
 ## Variable Subsetting with Index vectors
 Subsets of the elements of a vector may be selected by appending to the name of the vector an index vector in square brackets. More generally any expression that evaluates to a vector may  have subsets of its elements similarly selected by appending an index vector in square brackets immediately after the expression. 
 
@@ -218,6 +241,7 @@ x
 y <- x[!is.na(x)] 
 y 
 ```
+
 ### 2. Indexing with a vector of positive integral quantities. 
 In this case the values in the index vector must lie in the set {1, 2, . . . , length(x)}. The corresponding elements of the vector are selected and concatenated, in that order, in the result. The index vector can be of any length and the result is of the same length as the index vector. For example x[6] is the sixth component of x. Try :
 ```{r}
@@ -230,6 +254,7 @@ var11 <- rep(c(1,2,2,1), times=2)
 var11
 c("x","y")[var11] 
 ```
+
 ### 3. Indexing with a vector of negative integral quantities
 Such an index vector specifies the values to be excluded rather than included. Thus 
 ```{r}
@@ -255,11 +280,12 @@ An indexed expression can also appear on the receiving end of an assignment, in 
 
 The vector assigned must match the length of the index vector, and in the case of a logical index vector it must again be the same length as the vector it is indexing. For example :
 ```{r}
-x<- c(x, NA)
+x <- c(x, NA)
 x[is.na(x)] <- 0
 x
 ```
 replaces any missing values in *x* by zeros. On the other hand :
+
 ```{r}
 y=c(1,-2,3,-4,5)
 y
@@ -270,29 +296,6 @@ has the same effect as using the *abs()* that computes the absolute values in a 
 ```{r}
 y <- abs(y)
 y
-```
-
-## Missing values
-In some cases the components of a vector may not be completely known. When an element
-or value is “not available” or a “missing value” in the statistical sense, a place within a vector may be reserved for it by assigning it the special value NA. In general any operation on an *NA* becomes an *NA*. The motivation for this rule is simply that if the specification of an operation is incomplete, the result cannot be known and hence is not available.
-
-The function *is.na()* gives a logical vector of the same size as x with value *TRUE* if and only if the corresponding element in x is *NA*.
-```{r}
-z <- c(1:3,NA); 
-z
-length(z)
-ind <- is.na(z)
-ind
-```
-Note that there is a second kind of “missing” values which are produced by numerical computation, the so-called *Not a Number*, *NaN*, values. Examples are :
-```{r}
-0/0
-Inf - Inf
-```
-which both give *NaN* since the result cannot be defined sensibly. The function *is.na()* is *TRUE* both for *NA* and *NaN* values. To differentiate these, *is.nan()* is only *TRUE* for an *NaN* :
-```{r}
-is.nan(NA)
-is.nan(NaN)
 ```
 
 ### Exercise
@@ -306,25 +309,9 @@ v <- 2*temp + 1
 v
 ```
 
-### The "names" attributes
-It is possible to give *names* to every element of a vector :
+For a full list of native arithmetic operators, consult the help topic *Arith* :
 ```{r}
-v
-print(names(v)) #no names
-```
-
-```{r}
-names(v)<- c("meals","hotel","transport","souvenirs","varia")
-v
-```
-
-When we have a named variable, we can reference/subset its elements on using names :
-```{r}
-v["hotel"]
-```
-Use the function *names()* to extract names in string format from a named vector :
-```{r}
-names(v)
+?Arith
 ```
 
 ## Characters
@@ -343,19 +330,27 @@ labs
 ```
 See also : strrep(), strsplit(), grep(), gsub()
 
-## Classification data (factor)
+## Categorical data (factor)
+Factors are used to store category information. Factors are internally stored by R as integers, but every category also have names, which are called *levels* in R.
+
+The easiest way of creating factors is using function *factor()* :
 ```{r}
-meas <- round(runif(10)*100,2)
-
-#mylevels <- c('high','medium','low')
-myclass <- character(10)
-myclass[meas < 50] <- "low"
-myclass[meas >= 50 & meas < 80] <- "medium"
-myclass[meas >= 80] <- "high"
-
-f <- data.frame(measurement=meas, class=myclass)
-print(f)
+factor(c("asia","europe","australia","europe","america","asia","europe","asia"))
 ```
+
+Factors can also be *ordered* :
+```{r}
+factor(LETTERS[3:1], ordered = TRUE)
+```
+
+# Exercise
+Create 10 uniformly distributed random integers between [0,100] and store them in a variable called *x*. Create an ordered factor variable called *myclass* that will store the following categories :
+
+- "low" if x is smaller than 30
+- "high" if x greater than 70
+- "medium" if x is in between
+
+For more information, on factors, consult help topic *factor*.
 
 ### Exercise
 Modify the exercise above for creating factors so that instead of using indexes, we can determine classes using *if* control statement.

@@ -1,0 +1,19 @@
+---
+title: "Solutions to exercises"
+output: html_notebook
+---
+
+# Exercise on factors
+
+```{r}
+x <- round(runif(10)*100)
+
+myclass <- character(10)
+myclass[x < 30] <- 1
+myclass[x >= 30 & x < 70] <- 2
+myclass[x >= 70] <- 3
+myclass = factor(myclass, ordered = TRUE)
+levels(myclass) <- c("low","medium","high")
+print(x)
+print(myclass)
+```
