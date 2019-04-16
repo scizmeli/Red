@@ -32,6 +32,7 @@ The vertical arrow keys on the keyboard ⇓⇑ can be used to scroll forward and
 The special variable *.Last.value* prints the results of the last valid expression :
 ```{r}
 a=1.2 
+a
 1/a 
 ```
 and access the contents of *.Last.value* :
@@ -67,7 +68,7 @@ The first variable to function *list.files()* is the directory to search under (
 
 Note that Regex is an advanced, hairy subject. If you are more comfortable with simple shell globing, you can use *glob2rx()* to obtain the same results :
 ```{r}
-list.files(".",glob2rx("rec*"))
+list.files(".", glob2rx("rec*"))
 ```
 
 To obtain the size of the file in bytes, use the utility function "file.size()":
@@ -281,7 +282,7 @@ An indexed expression can also appear on the receiving end of an assignment, in 
 The vector assigned must match the length of the index vector, and in the case of a logical index vector it must again be the same length as the vector it is indexing. For example :
 ```{r}
 x <- c(x, NA)
-x[is.na(x)] <- 0
+x[is.na(x)] <- c(0,12)
 x
 ```
 replaces any missing values in *x* by zeros. On the other hand :
@@ -299,7 +300,12 @@ y
 ```
 
 ### Exercise
-To increase the readability of the resulting `data.frame` object `f`, sort the table in descending order of `meas` values.
+To increase the readability of the following object `f`, sort the values in descending order.
+```{r}
+f <- c(1, 6, -3, 88, -9e4)
+f
+```
+
 
 # Native variable types in R
 ## Numeric vectors
@@ -324,18 +330,21 @@ class(b)
 ```
 The *paste()* function takes an arbitrary number of arguments and concatenates them one by one into character strings :
 ```{r}
-labs <- paste(c("X","Y"), 1:13, sep="||")
 labs <- paste("hello", "world", sep="&")
+labs
+labs <- paste(c("X","Y"), 1:13, sep="||")
 labs
 ```
 See also : strrep(), strsplit(), grep(), gsub()
 
 ## Categorical data (factor)
-Factors are used to store category information. Factors are internally stored by R as integers, but every category also have names, which are called *levels* in R.
+Factors are used to store category information. Factors are internally stored by R as integers, but every category also take names, which are called *levels* in R.
 
 The easiest way of creating factors is using function *factor()* :
 ```{r}
-factor(c("asia","europe","australia","europe","america","asia","europe","asia"))
+ff <- factor(c("asia","europe","australia","europe","america","asia","europe","asia"))
+class(ff)
+ff
 ```
 
 Factors can also be *ordered* :
@@ -378,15 +387,6 @@ flo <- read.csv("https://vincentarelbundock.github.io/Rdatasets/csv/carData/Flor
 head(flo)
 ```
 
-For this task, we will use *read.csv2()* :
-
-```{r}
-maps <- read.csv2("MapsThatChangedOurWorld_StoryMap_Data.csv",sep = ";")
-colnames(maps)[5] <- "Title"
-maps[,1:7]
-```
-
-
 ### Exercise
 To practice variaous R data types, let's use the [Maps That Changed Our World](https://www.arcgis.com/home/item.html?id=72f29810c72043358d7b2bad4c2f22c9) dataset to meet some of native data types. Let us have a look at the first 3 lines of the file :
 ```{r}
@@ -394,6 +394,14 @@ download.file("https://raw.githubusercontent.com/scizmeli/Red/master/MapsThatCha
 cat(readLines("MapsThatChangedOurWorld_StoryMap_Data.csv",n = 3), sep="\n") 
 ```
 Inspecting the first three lines, we see that the columns of this csv dataset are separated by the character **";"** and the first line looks like it contains column headers. To import this csv file, we have several options. R comes with base tools that can read csv files : *read.csv()*, *read.table()*, *read.delim()*, *read.delim2()*, *data.table::fread()*. Note that the *fread()* function is part of package *data.table*. 
+
+For this task, we will use *read.csv2()* :
+
+```{r}
+maps <- read.csv2("MapsThatChangedOurWorld_StoryMap_Data.csv",sep = ";")
+colnames(maps)[5] <- "Title"
+maps[,1:7]
+```
 
 Note that we use the input argument *sep* to tell *read.csv2()* to use that character as a separator string. The resulting object *maps* is of type *data.frame*, which is the most popular data type in R. It stores data in a table structure, with multiple rows and columns. A *data.frame* gives the user ability to store different data types at each column. Each row and column can also have a name. In this dataset, each column has a name and the column names are stored in the first row of the csv file. 
 
