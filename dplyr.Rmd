@@ -145,7 +145,7 @@ transmute(flights,
 ```
 
 ### Summarise values with `summarise()`
-
+summarise
 The last verb is `summarise()`. It collapses a data frame to a single row.
 
 ```{r}
@@ -227,7 +227,7 @@ delay <- summarise(by_tailnum,
   dist = mean(distance, na.rm = TRUE),
   delay = mean(arr_delay, na.rm = TRUE))
 delay <- filter(delay, count > 20, dist < 2000)
-
+  
 # Interestingly, the average delay is only slightly related to the
 # average distance flown by a plane.
 ggplot(delay, aes(dist, delay)) +
@@ -522,3 +522,4 @@ Compared to virtual data frame approaches:
 * it doesn't pretend that you have a data frame: if you want to run lm etc, you'll still need to manually pull down the data
 
 * it doesn't provide methods for R summary functions (e.g. `mean()`, or `sum()`)
+

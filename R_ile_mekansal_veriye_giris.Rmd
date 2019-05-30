@@ -163,11 +163,11 @@ tmap_mode("view")
 # if (Sys.getenv("USER") != "CRAN")
 tm_shape(nc) + tm_fill("BIR74", palette = sf.colors(5))
 ```
-
 ## World map data
 *spData* paketi çeşitli mekansal veritabanları içermekte. Mesela dünya haritasını değişik boyutları ile çizelim. 
 ```{r}
 library(sf)
+library(spData)
 world <- st_read(system.file("shapes/world.gpkg", package="spData"))
 names(world)
 plot(world)
@@ -186,7 +186,4 @@ plot(world)
 
 **Servet Ahmet Çizmeli**, PranaGEO Ltd., Bodrum
 
-**ahmet@pranageo.com**
-
-# Bize yardım edin
-**VisualR** kendine yeni bir isim arıyor... Platformumuzun isim annesi olmak ister misiniz?
+**ahmet@pranageo.com**s

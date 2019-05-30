@@ -1,2 +1,2 @@
-tt<- 25
+tt <- 25
 print(tt)
