@@ -1,0 +1,59 @@
+---
+title: "Introduction to R"
+output: html_notebook
+---
+
+# Exercise 1
+Download and import the [NOMAD: NASA bio-Optical Marine Algorithm Dataset](https://seabass.gsfc.nasa.gov/wiki/NOMAD). This is a CSV file containing 4458 lines
+of measurements of seawater quality collected during several sea campaigns. Use the URL provided in the first cell.
+
+- Download the csv file and give the downloaded file the same name
+- View contents the first 3 lines of the file 
+- Import the file contents into a data.frame called *nomad* using the in-built function *read.table()*
+- Print the names of the columns of the newly created data.frame
+- Use the first 6 columns of the data.frame to create a new column of type *POSIXct*. Hint : Generate a character variable of date/time in %Y/%m/%d %H:%M:%S" format using *paste()*. Then convert the string to *strptime()* and call it datetime1
+- Make sure that *datetime* variable is of class *POSIXct*
+- Remove the first 6 columns of *nomad*
+- Prepend *datetime* as a new column into *nomad*. Call new column as "datetime"
+- Convert all invalid numerical measurements to *NA*
+- Make a scatterplot with function *plot()* where the column *chl_a* is plotted with respect to column *lw489*. Use red dots (instead of black hollow circles) of size 3. Hint : Consult documentation of function *par()*.
+
+```{r}
+urlNomad = "https://raw.githubusercontent.com/scizmeli/Red/master/nomad_seabass_v2.a_2008200.txt"
+```
+
+#Download the csv file
+```{r}
+#
+```
+
+#Import data.frame
+```{r}
+#
+```
+
+#Make a datetime variable of tyep Posixct
+```{r}
+#
+```
+
+# Remove the first 6 columns of the data frame
+```{r}
+#
+```
+
+# Prepend *datetime* as a new column into *nomad*. Call new column as "datetime"
+```{r}
+#
+```
+
+# Convert all invalid numerical measurements to *NA*
+```{r}
+#
+```
+
+# Make a scatterplot of *chl_a* with respect to *lw489*
+```{r}
+#
+```
+
