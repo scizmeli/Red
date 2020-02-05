@@ -635,9 +635,14 @@ Extract the tabular data and convert it to *data.frame* :
 ```{r}
 js$data <- as.data.frame(js$data)
 
-as.matrix(sapply(js$data[,3:15], function(x) as.numeric(x)))
+new_df <- as.matrix(sapply(js$data[,3:15], function(x) as.numeric(x)))
 
-as.matrix(sapply(js$data[,3:15], as.numeric))
+head(new_df)
+
+#The command below creates exaclty the same output
+new_df2 <- as.matrix(sapply(js$data[,3:15], as.numeric))
+
+identical(new_df, new_df2)
 ```
 
 ## Data output
