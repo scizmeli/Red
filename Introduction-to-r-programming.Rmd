@@ -465,7 +465,7 @@ Produce same output without using any of `for` or `while` loops.
 
 See also : `while` and `repeat`
 
-## *apply function family
+## The *apply function family
 
 The argument **X** that the apply family of functions need is the input source. The argument **FUN** is a variable of type *function* and is "applied" to all elements of **X**. It can be a built-in function like *mean* or it can be a function custom-made by ourselves.
 
@@ -479,7 +479,7 @@ employees <- list(emp1, emp2, emp3)
 employees
 ```
 
-## sapply & lapply
+### sapply & lapply
 Let us run sapply to "extract" the age information stored in the employee database into an R numeric vector :
 
 ```{r}
@@ -489,7 +489,7 @@ sapply(employees, function(x) x$Age)
 ### Exercise 
 Now try the same with *lapply*. What is the difference?
 
-## apply
+### apply
 apply() is like *sapply()* and *lapply()*, but is customized for 2-dimensional arrays. The second argument to apply() is the dimension along which to run the function. Let us apply the built-in function *mean* to calculate the mean values in  Florida 2000 election votes :
 ```{r}
 flo <- read.csv("https://vincentarelbundock.github.io/Rdatasets/csv/carData/Florida.csv")
@@ -516,7 +516,7 @@ all(county_sums == flo$Total)
 all.equal(county_sums, flo$Total)
 ```
 
-## tapply
+### tapply
 The function tapply applies **FUN** over **X** according to group criteria by the input factor **INDEX**. 
 
 ```{r}
@@ -537,7 +537,6 @@ See https://www.r-bloggers.com/r-function-of-the-day-tapply-2 for a full explana
 R is a modular language and is therefore optimized for programming through functions. Anatomy of functions in R can be displayed as follows :
 
 ```{r eval=FALSE}
-> 
 f178 <- function (formula, subsetmethod = "qr",  model = TRUE, x = offset, ...) 
 {
     ret.x <- x
@@ -549,6 +548,19 @@ f178 <- function (formula, subsetmethod = "qr",  model = TRUE, x = offset, ...)
     output = x * y 
 }
 ```
+
+- A function can have 0 or more named input arguments (formula, data, ...)
+- Function body is the code that is within curly braces "{ }"
+- Some arguments can have default values (method="qr")
+- If you are happy with the default value, you can omit that argument
+- Three points "..." indicate non-defined arguments can be additionally provided
+- Functions, when defined, can be assigned to variables. These variables become of native R type called *function* (like *numeric*, *data.frame* etc.)
+- If the function body consists of one single line, one cam ommit curly braces  "{ }"
+- Functions are evaluated in their own workspace. When the functions exits, the contents of the function workspace are destroyed
+- The last expression evaluated within the body of the function is returned (in this case, the contents of the variable *output* is assigned to variable *f178* when function exits)
+
+## Exercise
+Two functions *a1()* and *a2()* were defined below : 
 
 ```{r}
 a2 <- function(t1, t2, ...){
@@ -564,19 +576,13 @@ a2 <- function(t1, t2, ...){
 a1 <- function(var1, var2, ...){
   a2(var1, var2, ...)
 }
+```
+
+What would be the expected output of the following calls to *a1()*?
+```{r eval=FALSE}
 a1(12, 2, param=TRUE)
 a1(12, 2, param=FALSE, "this is comment")
 ```
-
-- A function can have 0 or more named input arguments (formula, data, ...)
-- Function body is the code that is within curly braces "{ }"
-- Some arguments can have default values (method="qr")
-- If you are happy with the default value, you can omit that argument
-- Three points "..." indicate non-defined arguments can be additionally provided
-- Functions, when defined, can be assigned to variables. These variables become of native R type called *function* (like *numeric*, *data.frame* etc.)
-- If the function body consists of one single line, one cam ommit curly braces  "{ }"
-- Functions are evaluated in their own workspace. When the functions exits, the contents of the function workspace are destroyed
-- The last expression evaluated within the body of the function is returned (in this case, the contents of the variable *output* is assigned to variable *f178* when function exits)
 
 # Data input and output
 ## Connections
@@ -669,30 +675,4 @@ It is also possible to i/o data from NoSQL databases. Refer to packages *RMongo*
 R packages *h5*, *rhdf5*, *RNetCDF* and *ncdf4* allow i/o operations from scientific data formats HDF5 and netcdf. These read/write operations are complex, so refer to those package documentation for more information.
 
 ## GIS data formats
-R packages *rgdal* and *sf* offer interfaces for reading/writing various types of geospatial data formats. as.matrix(sapply(js$data[,3:15], function(x) as.numeric(x)))
-ite data from/to Excel files|
-| png::writePNG(), jpeg::writeJPEG(), tiff::writeTIFF()| Export RGB images|
-
-## Database connections
-The R packages *RODBC* and the more recent *DBI* offer a unified interface for various SQL databases. Individual packages *RMySQL*, *ROracle*, *RPostgreSQL* and *RSQLite* support more sophisticated operations for MySQL, Oracle, PostgreSQL and sqlite databases respectively.
-
-It is also possible to i/o data from NoSQL databases. Refer to packages *RMongo*, *mongolite*, *neo4r* etc.
-
-## Scientific data formats
-R packages *h5*, *rhdf5*, *RNetCDF* and *ncdf4* allow i/o operations from scientific data formats HDF5 and netcdf. These read/write operations are complex, so refer to those package documentation for more information.
-
-## GIS data formats
-R packages *rgdal* and *sf* offer interfaces for reading/writing various types of geospatial data formats.  | Read and wras.matrix(sapply(js$data[,3:15], function(x) as.numeric(x)))
-ite data from/to Excel files|
-| png::writePNG(), jpeg::writeJPEG(), tiff::writeTIFF()| Export RGB images|
-
-## Database connections
-The R packages *RODBC* and the more recent *DBI* offer a unified interface for various SQL databases. Individual packages *RMySQL*, *ROracle*, *RPostgreSQL* and *RSQLite* support more sophisticated operations for MySQL, Oracle, PostgreSQL and sqlite databases respectively.
-
-It is also possible to i/o data from NoSQL databases. Refer to packages *RMongo*, *mongolite*, *neo4r* etc.
-
-## Scientific data formats
-R packages *h5*, *rhdf5*, *RNetCDF* and *ncdf4* allow i/o operations from scientific data formats HDF5 and netcdf. These read/write operations are complex, so refer to those package documentation for more information.
-
-## GIS data formats
-R packages *rgdal* and *sf* offer interfaces for reading/writing various types of geospatial data formats. 
+R packages *rgdal* and *sf* offer interfaces for reading/writing various types of geospatial data formats.
